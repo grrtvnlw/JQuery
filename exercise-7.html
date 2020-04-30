@@ -15,22 +15,61 @@
     4. the ability to edit an existing task
 
     */
-    $(document).ready(function () {
-      $('#add-button').click(function () {
-        let input = ($('#description').val())
-        let $item = `<li>${input}<label>
-                      <input type="checkbox">mark complete</label>
-                      <label><input type="radio">remove</label>
-                    </li>`
-        $('#todo-list').append($item)
+
+    $(function () {
+      const $button = $('#add-button');
+      const $input = $('#description');
+      const $list = $('#todo-list');
+
+      $button.click(function () {
+        if ($input.val()) {
+          const $todoItem = $(`
+          <li>
+            <label class="text">${$input.val()}</label>
+            <input type="checkbox" name="checkbox">
+            <button class="delete">🗑</button>
+            <button class="edit">📝</button>
+          </li>
+          `);
+          $list.append($todoItem);
+          $input.val('');
+        }
       });
-      $(':checkbox').click(function () {
-        $(this).closest('li').toggleClass('stricken')
+
+      $(document).on('click', 'input[type="checkbox"]', function () {
+        if ($(this).is(':checked')) {
+          $(this).siblings('label').addClass('strike');
+        } else {
+          $(this).siblings('label').removeClass('strike')
+        }
       });
-      $(':radio').click(function () {
-        $(this).closest('li').fadeToggle('slow');
+      $(document).on('click', '.delete', function () {
+        $(this).closest('li').remove();
+      })
+      $(document).on('click', '.edit', function () {
+        const $todoLabel = $(this).siblings('label').first();
+        const newValue = prompt('Edit Todo Item', $todoLabel.text());
+        $todoLabel.text(newValue);
       });
     });
+
+
+    // $(document).ready(function () {
+    //   $('#add-button').click(function () {
+    //     let input = ($('#description').val())
+    //     let $item = `<li>${input}<label>
+    //                   <input type="checkbox">mark complete</label>
+    //                   <label><input type="radio">remove</label>
+    //                 </li>`
+    //     $('#todo-list').append($item)
+    //   });
+    //   $(':checkbox').click(function () {
+    //     $(this).closest('li').toggleClass('stricken')
+    //   });
+    //   $(':radio').click(function () {
+    //     $(this).closest('li').fadeToggle('slow');
+    //   });
+    // });
     </script>
     <style>
     #wrapper {
@@ -42,7 +81,7 @@
       font-size: 1.5em;
     }
 
-    .stricken {
+    .strike {
       text-decoration: line-through;
     }
 
@@ -61,7 +100,6 @@
       <input id="description" type="text" name="description">
       <button id="add-button">Add Task</button>
       <ul id="todo-list">
-        <li>Feed the cat<label><input type="checkbox">mark complete</label><label><input type="radio">remove</label></li>
       </ul>
     </div>
   </body>
